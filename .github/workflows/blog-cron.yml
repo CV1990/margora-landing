@@ -1,5 +1,8 @@
-name: Auto Blog Generator
+name: Margora CI/CD - Auto Blog & Deploy
 on:
+  push:
+    branches:
+      - main 
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
@@ -8,28 +11,42 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: 1. Checkout del código
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: 2. Configurar Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
+      - name: 3. Instalar dependencias
         run: npm ci
 
-      - name: Generate Post
+      - name: 4. Generar Post (IA)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-post.js
 
-      - name: Commit and Push
+      - name: 5. Guardar cambios en el Repo (JSON)
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
-          git add data/posts.json
-          git diff --staged --quiet || git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)"
-          git push
+          git add public/data/posts.json
+          git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
+
+      - name: 6. Build de Next.js
+        run: npm run build
+
+      - name: 7. Despliegue por FTP (Sincronización)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/ 
+          server-dir: ./public_html/
+          delete-destination: false
