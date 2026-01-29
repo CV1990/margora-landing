@@ -1,0 +1,18 @@
+[
+  {
+    "id": "tendencias-automatizacion-ecommerce-2026",
+    "title": "Tendencias en automatización para e-commerce en 2026",
+    "date": "2026-01-20T12:00:00.000Z",
+    "category": "E-commerce",
+    "excerpt": "Descubre cómo la automatización está transformando las tiendas online y qué adoptar este año.",
+    "content": "<p>La automatización en e-commerce sigue evolucionando. En 2026, herramientas de IA, chatbots y flujos sin código marcan la diferencia.</p>"
+  },
+  {
+    "id": "arquitectura-software-escalable",
+    "title": "Arquitectura de software escalable para startups",
+    "date": "2026-01-15T10:00:00.000Z",
+    "category": "Tecnología",
+    "excerpt": "Principios y patrones para diseñar sistemas que crecen con tu negocio.",
+    "content": "<p>Construir desde el día uno con escalabilidad en mente ahorra refactors costosos más adelante.</p>"
+  }
+]

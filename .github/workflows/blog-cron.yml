@@ -1,0 +1,35 @@
+name: Auto Blog Generator
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Post
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/generate-post.js
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "Margora AutoBot"
+          git config --global user.email "bot@margora.com"
+          git add data/posts.json
+          git diff --staged --quiet || git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)"
+          git push
