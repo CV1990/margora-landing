@@ -18,24 +18,22 @@ export function Newsletter() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        throw new Error(data.error || 'Error al suscribirse')
+        throw new Error(data.error || "Error al suscribirse")
       }
 
       setIsSubscribed(true)
       setEmail("")
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al suscribirse')
+      setError(err instanceof Error ? err.message : "Error al suscribirse")
     } finally {
       setIsLoading(false)
     }

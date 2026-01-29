@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import {
   Card,
   CardHeader,
@@ -41,34 +42,39 @@ export function Blog() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts2026.map((post) => (
-            <Card
+            <Link
               key={post.id}
-              className="group overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1"
+              href={`/blog/${post.id}`}
+              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
             >
-              <CardHeader className="flex flex-row items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <Badge variant="secondary" className="rounded-full text-xs">
-                    {post.category}
-                  </Badge>
-                  <CardTitle className="text-lg leading-tight">
-                    {post.title}
-                  </CardTitle>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
-              </CardHeader>
-              <CardContent className="pt-0">
-                <CardDescription className="line-clamp-3">
-                  {post.excerpt}
-                </CardDescription>
-                <p className="text-xs text-muted-foreground mt-3">
-                  {new Date(post.date).toLocaleDateString("es-ES", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </CardContent>
-            </Card>
+              <Card
+                className="group overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1 h-full"
+              >
+                <CardHeader className="flex flex-row items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="rounded-full text-xs">
+                      {post.category}
+                    </Badge>
+                    <CardTitle className="text-lg leading-tight">
+                      {post.title}
+                    </CardTitle>
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <CardDescription className="line-clamp-3">
+                    {post.excerpt}
+                  </CardDescription>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    {new Date(post.date).toLocaleDateString("es-ES", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 

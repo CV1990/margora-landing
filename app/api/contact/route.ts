@@ -1,53 +1,67 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { Resend } from "resend"
+import { db } from "@/lib/db"
 
-const CONTACT_EMAIL = "carlos.rivas@margora.com"
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const { nombre, empresa, correo, mensaje } = await request.json()
+    const body = await request.json()
+    const { nombre, empresa, correo, mensaje } = body
 
     if (!nombre || !empresa || !correo || !mensaje) {
       return NextResponse.json(
-        { error: "Nombre, empresa, correo y mensaje son requeridos." },
+        { error: "Faltan campos: nombre, empresa, correo, mensaje" },
         { status: 400 }
       )
     }
 
-    if (!process.env.RESEND_API_KEY) {
-      console.error("RESEND_API_KEY no configurada")
-      return NextResponse.json(
-        { error: "Servicio de email no configurado." },
-        { status: 503 }
-      )
-    }
+    const from = process.env.RESEND_FROM ?? ""
 
-    const resend = new Resend(process.env.RESEND_API_KEY)
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM ?? "onboarding@resend.dev",
-      to: CONTACT_EMAIL,
-      replyTo: correo,
-      subject: `[Margora Contacto] ${empresa} – ${nombre}`,
-      html: `
-        <h2>Nuevo mensaje desde el formulario de contacto</h2>
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Empresa:</strong> ${empresa}</p>
-        <p><strong>Correo:</strong> ${correo}</p>
-        <h3>Mensaje</h3>
-        <p>${mensaje.replace(/\n/g, "<br />")}</p>
-      `,
+    // Asegurar que la tabla existe en Turso
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        empresa TEXT NOT NULL,
+        correo TEXT NOT NULL,
+        mensaje TEXT NOT NULL,
+        created_at TEXT DEFAULT (datetime('now'))
+      )
+    `)
+
+    // Guardar en Turso
+    await db.execute({
+      sql: `INSERT INTO contact_submissions (nombre, empresa, correo, mensaje) VALUES (?, ?, ?, ?)`,
+      args: [nombre.trim(), empresa.trim(), correo.trim(), mensaje.trim()],
     })
 
-    if (error) {
-      console.error("Resend error:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    // Enviar email con Resend (opcional: si falla, el mensaje ya está guardado en Turso)
+    if (process.env.RESEND_API_KEY && from) {
+      const { error } = await resend.emails.send({
+        from: from,
+        to: [from],
+        subject: `[Margora] Contacto: ${nombre} - ${empresa}`,
+        html: `
+          <h2>Nuevo mensaje de contacto</h2>
+          <p><strong>Nombre:</strong> ${nombre}</p>
+          <p><strong>Empresa:</strong> ${empresa}</p>
+          <p><strong>Correo:</strong> ${correo}</p>
+          <p><strong>Mensaje:</strong></p>
+          <pre>${mensaje}</pre>
+        `,
+      })
+      if (error) {
+        console.error("Resend error (mensaje ya guardado en Turso):", error)
+        // Si el dominio no está verificado en Resend, ver: https://resend.com/domains
+      }
     }
 
-    return NextResponse.json({ message: "Mensaje enviado.", id: data?.id }, { status: 201 })
-  } catch (e) {
-    console.error("Contact API error:", e)
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error("Contact API error:", err)
     return NextResponse.json(
-      { error: "No se pudo enviar el mensaje. Intenta de nuevo." },
+      { error: err instanceof Error ? err.message : "Error al procesar el mensaje" },
       { status: 500 }
     )
   }

@@ -28,13 +28,22 @@ export const db = new Proxy({} as ReturnType<typeof getDb>, {
   }
 })
 
-// Inicializar la tabla de suscriptores si no existe
-// Solo guarda el correo electrónico
+// Inicializar tablas si no existen
 export async function initDatabase() {
   try {
     await db.execute(`
       CREATE TABLE IF NOT EXISTS newsletter_subscribers (
         email TEXT PRIMARY KEY NOT NULL
+      )
+    `)
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        empresa TEXT NOT NULL,
+        correo TEXT NOT NULL,
+        mensaje TEXT NOT NULL,
+        created_at TEXT DEFAULT (datetime('now'))
       )
     `)
     console.log('✅ Base de datos inicializada correctamente')

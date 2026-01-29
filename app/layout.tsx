@@ -12,21 +12,8 @@ export const metadata: Metadata = {
   description: 'Margora ofrece servicios de consultoría de software, desarrollo web, e-commerce, XR/Meta Quest, migración AWS, aplicaciones móviles, marketing digital y gestión de equipos ágiles.',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/assets/icons/icon.ico',
+    apple: '/assets/icons/icon.ico',
   },
 }
 
