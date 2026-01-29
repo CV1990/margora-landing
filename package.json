@@ -8,7 +8,8 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "generate-post": "node scripts/generate-post.js"
+    "generate-post": "node scripts/generate-post.js",
+    "generate-post:devlocal": "node scripts/generate-post-devlocal.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
