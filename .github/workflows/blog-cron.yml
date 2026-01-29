@@ -1,10 +1,9 @@
 name: Margora CI/CD - Auto Blog & Deploy
 on:
   push:
-    branches:
-      - main 
+    branches: [ main ]
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * *' # 12:00 AM México aprox.
   workflow_dispatch:
 
 permissions:
@@ -31,7 +30,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-post.js
 
-      - name: 5. Guardar cambios en el Repo (JSON)
+      - name: 5. Guardar cambios en el Repo
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
@@ -41,7 +40,7 @@ jobs:
       - name: 6. Build de Next.js
         run: npm run build
 
-      - name: 7. Despliegue por FTP (Sincronización)
+      - name: 7. Despliegue por FTP a HostGator
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -50,3 +49,14 @@ jobs:
           local-dir: ./out/ 
           server-dir: ./public_html/
           delete-destination: false
+
+      - name: 8. Notificar en Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            🚀 **Despliegue Exitoso: Margora**
+            El bot de IA ha publicado un nuevo artículo y el sitio ya está actualizado en HostGator.
+            🔗 [Ver sitio](https://margora.com)
