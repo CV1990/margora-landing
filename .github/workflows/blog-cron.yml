@@ -34,7 +34,7 @@ jobs:
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
-          git add public/data/posts.json
+          git add data/posts.json
           git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
 
       - name: 6. Build de Next.js
