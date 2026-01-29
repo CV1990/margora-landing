@@ -51,8 +51,10 @@ jobs:
           timeout: 60000
           security: loose
 
+      # Si falla "chat not found": inicia el bot con /start en Telegram y usa tu chat_id en TELEGRAM_TO
       - name: 8. Notificar en Telegram
         uses: appleboy/telegram-action@master
+        continue-on-error: true
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
