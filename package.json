@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "build:check": "npm run build && node scripts/verify-build.js",
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "lint": "eslint .",
     "start": "next start",
     "generate-post": "node scripts/generate-post.js",
@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
+    "cross-env": "^7.0.3",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
