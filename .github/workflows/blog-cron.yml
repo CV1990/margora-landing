@@ -41,6 +41,8 @@ jobs:
           git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
 
       - name: 6. Build de Next.js
+        env:
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
         run: npm run build
 
       - name: 7. Despliegue por FTP a HostGator

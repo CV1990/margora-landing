@@ -3,7 +3,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: 'export',
+  // Sin output: 'export' para Vercel: permite API routes, serverless y env vars
   images: {
     unoptimized: true,
     remotePatterns: [

@@ -23,13 +23,26 @@ export function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("/api/contact", {
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY
+      if (!accessKey) {
+        throw new Error("Formulario no configurado")
+      }
+
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, empresa, correo, mensaje }),
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `[Margora] Contacto: ${nombre} - ${empresa}`,
+          from_name: nombre,
+          name: nombre,
+          email: correo,
+          empresa: empresa,
+          message: mensaje,
+        }),
       })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(data.error ?? "Error al enviar")
+      if (!data.success) throw new Error(data.message ?? "Error al enviar")
       setIsSent(true)
       setNombre("")
       setEmpresa("")

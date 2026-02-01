@@ -18,16 +18,27 @@ export function Newsletter() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/newsletter", {
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY
+      if (!accessKey) {
+        throw new Error("Suscripción no configurada")
+      }
+
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: "[Margora] Nueva suscripción al newsletter",
+          from_name: "Newsletter Margora",
+          email: email,
+          message: `Nuevo suscriptor: ${email}`,
+        }),
       })
 
       const data = await response.json().catch(() => ({}))
 
-      if (!response.ok) {
-        throw new Error(data.error || "Error al suscribirse")
+      if (!data.success) {
+        throw new Error(data.message || "Error al suscribirse")
       }
 
       setIsSubscribed(true)
