@@ -3,10 +3,7 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: '0 6 * * *' # 12:00 AM México aprox.
-    - cron: '0 15 * * *'  # 9:00 AM México (UTC-6)
-    - cron: '0 20 * * *'  # 2:00 PM México (UTC-6)
-    - cron: '0 23 * * *'  # 5:00 PM México (UTC-6) 
+    - cron: '0 16 * * *'  # 10:00 AM México (UTC-6) 
   workflow_dispatch:
 
 permissions:

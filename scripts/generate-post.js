@@ -64,6 +64,30 @@ IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. Sin markdown, sin \
 `
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function generateWithRetry(model, prompt, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await model.generateContent(prompt)
+      return result
+    } catch (err) {
+      const is429 =
+        err.status === 429 ||
+        (err.message && (err.message.includes("429") || err.message.includes("Too Many Requests") || err.message.includes("Resource exhausted")))
+      if (is429 && attempt < maxRetries) {
+        const delayMs = Math.pow(2, attempt) * 15000 // 30s, 60s, 120s
+        console.warn(`Rate limit (429). Reintento ${attempt}/${maxRetries} en ${delayMs / 1000}s...`)
+        await sleep(delayMs)
+      } else {
+        throw err
+      }
+    }
+  }
+}
+
 function extractJson(text) {
   let raw = text.trim()
   const jsonBlock = raw.match(/```(?:json)?\s*([\s\S]*?)```/)
@@ -82,7 +106,7 @@ async function main() {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
 
   const prompt = buildPrompt()
-  const result = await model.generateContent(prompt)
+  const result = await generateWithRetry(model, prompt)
   const text = result.response ? result.response.text() : null
   if (!text) {
     console.error("Gemini no devolvió texto.")
