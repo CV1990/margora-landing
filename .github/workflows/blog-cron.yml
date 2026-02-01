@@ -33,31 +33,20 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-post.js
 
-      - name: 5. Guardar cambios en el Repo
+      - name: 5. Build de Next.js
+        env:
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
+        run: npm run build
+
+      - name: 6. Guardar cambios en el Repo
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
           git add data/posts.json
           git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
 
-      - name: 6. Build de Next.js
-        env:
-          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
-        run: npm run build
-
-      - name: 7. Despliegue por FTP a HostGator
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./out/
-          server-dir: ./public_html/
-          timeout: 60000
-          security: loose
-
       # Si falla "chat not found": inicia el bot con /start en Telegram y usa tu chat_id en TELEGRAM_TO
-      - name: 8. Notificar en Telegram
+      - name: 7. Notificar en Telegram
         uses: appleboy/telegram-action@master
         continue-on-error: true
         with:
@@ -66,5 +55,5 @@ jobs:
           format: markdown
           message: |
             🚀 **Despliegue Exitoso: Margora**
-            El bot de IA ha publicado un nuevo artículo y el sitio ya está actualizado en HostGator.
+            El bot de IA ha publicado un nuevo artículo. Vercel desplegará automáticamente tras el push.
             🔗 [Ver sitio](https://margora.com)
