@@ -56,4 +56,4 @@ jobs:
           message: |
             🚀 **Despliegue Exitoso: Margora**
             El bot de IA ha publicado un nuevo artículo. Vercel desplegará automáticamente tras el push.
-            🔗 [Ver sitio](https://margora.com)
+            🔗 [Ver sitio](https://margora.com/#blog)
