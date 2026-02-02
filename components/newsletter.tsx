@@ -5,8 +5,10 @@ import { useState } from "react"
 import { Send, CheckCircle, Mail, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useWeb3FormsKey } from "@/components/env-provider"
 
 export function Newsletter() {
+  const web3FormsKey = useWeb3FormsKey()
   const [email, setEmail] = useState("")
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -18,7 +20,7 @@ export function Newsletter() {
     setIsLoading(true)
 
     try {
-      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY
+      const accessKey = web3FormsKey
       if (!accessKey) {
         throw new Error("Suscripción no configurada")
       }

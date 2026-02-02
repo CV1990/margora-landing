@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { useWeb3FormsKey } from "@/components/env-provider"
 
 export function ContactForm() {
+  const web3FormsKey = useWeb3FormsKey()
   const [nombre, setNombre] = useState("")
   const [empresa, setEmpresa] = useState("")
   const [correo, setCorreo] = useState("")
@@ -23,7 +25,7 @@ export function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY
+      const accessKey = web3FormsKey
       if (!accessKey) {
         throw new Error("Formulario no configurado")
       }

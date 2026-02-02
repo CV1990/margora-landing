@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { Resend } from "resend"
 import { db } from "@/lib/db"
+import { getResendApiKey, getResendFrom } from "@/lib/env"
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const from = process.env.RESEND_FROM ?? ""
+    const from = getResendFrom()
 
     // Asegurar que la tabla existe en Turso
     await db.execute(`
@@ -35,8 +36,9 @@ export async function POST(request: Request) {
     })
 
     // Enviar email con Resend (opcional: si falla, el mensaje ya está guardado en Turso)
-    if (process.env.RESEND_API_KEY && from) {
-      const resend = new Resend(process.env.RESEND_API_KEY)
+    const resendApiKey = getResendApiKey()
+    if (resendApiKey && from) {
+      const resend = new Resend(resendApiKey)
       const { error } = await resend.emails.send({
         from: from,
         to: [from],

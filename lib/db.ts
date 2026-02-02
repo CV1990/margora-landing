@@ -1,9 +1,10 @@
 import { createClient } from '@libsql/client'
+import { getTursoAuthToken, getTursoDatabaseUrl } from '@/lib/env'
 
 // Configuración de Turso - Validación lazy
 function getDb() {
-  const tursoUrl = process.env.TURSO_DATABASE_URL
-  const tursoAuthToken = process.env.TURSO_AUTH_TOKEN
+  const tursoUrl = getTursoDatabaseUrl()
+  const tursoAuthToken = getTursoAuthToken()
 
   if (!tursoUrl || !tursoAuthToken) {
     throw new Error('TURSO_DATABASE_URL y TURSO_AUTH_TOKEN deben estar configuradas en las variables de entorno')
