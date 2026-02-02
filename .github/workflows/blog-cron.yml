@@ -22,20 +22,23 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: 3. Instalar dependencias
+      - name: 3. Evitar que Next use pnpm (solo usamos npm)
+        run: rm -f pnpm-lock.yaml
+
+      - name: 4. Instalar dependencias
         run: npm ci
 
-      - name: 4. Generar Post (IA)
+      - name: 5. Generar Post (IA)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-post.js
 
-      - name: 5. Build de Next.js
+      - name: 6. Build de Next.js
         env:
           NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
         run: npm run build
 
-      - name: 6. Guardar cambios en el Repo
+      - name: 7. Guardar cambios en el Repo
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
@@ -43,7 +46,7 @@ jobs:
           git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
 
       # Si falla "chat not found": inicia el bot con /start en Telegram y usa tu chat_id en TELEGRAM_TO
-      - name: 7. Notificar en Telegram
+      - name: 8. Notificar en Telegram
         uses: appleboy/telegram-action@master
         continue-on-error: true
         with:
