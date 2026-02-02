@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useWeb3FormsKey } from "@/components/env-provider"
+import { validateContactForm } from "@/lib/form-security"
 
 export function ContactForm() {
   const web3FormsKey = useWeb3FormsKey()
@@ -30,17 +31,19 @@ export function ContactForm() {
         throw new Error("Formulario no configurado")
       }
 
+      const safe = validateContactForm({ nombre, empresa, correo, mensaje })
+
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_key: accessKey,
-          subject: `[Margora] Contacto: ${nombre} - ${empresa}`,
-          from_name: nombre,
-          name: nombre,
-          email: correo,
-          empresa: empresa,
-          message: mensaje,
+          subject: `[Margora] Contacto: ${safe.nombre} - ${safe.empresa}`,
+          from_name: safe.nombre,
+          name: safe.nombre,
+          email: safe.correo,
+          empresa: safe.empresa,
+          message: safe.mensaje,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -113,6 +116,7 @@ export function ContactForm() {
                       value={nombre}
                       onChange={(e) => setNombre(e.target.value)}
                       required
+                      maxLength={120}
                       disabled={isSubmitting}
                       className="h-12 rounded-xl"
                     />
@@ -126,6 +130,7 @@ export function ContactForm() {
                       value={empresa}
                       onChange={(e) => setEmpresa(e.target.value)}
                       required
+                      maxLength={200}
                       disabled={isSubmitting}
                       className="h-12 rounded-xl"
                     />
@@ -141,6 +146,7 @@ export function ContactForm() {
                     value={correo}
                     onChange={(e) => setCorreo(e.target.value)}
                     required
+                    maxLength={254}
                     disabled={isSubmitting}
                     className="h-12 rounded-xl"
                   />
@@ -154,6 +160,7 @@ export function ContactForm() {
                     value={mensaje}
                     onChange={(e) => setMensaje(e.target.value)}
                     required
+                    maxLength={5000}
                     disabled={isSubmitting}
                     rows={5}
                     className="rounded-xl resize-none"

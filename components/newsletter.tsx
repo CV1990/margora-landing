@@ -6,6 +6,7 @@ import { Send, CheckCircle, Mail, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useWeb3FormsKey } from "@/components/env-provider"
+import { validateNewsletterForm } from "@/lib/form-security"
 
 export function Newsletter() {
   const web3FormsKey = useWeb3FormsKey()
@@ -25,6 +26,8 @@ export function Newsletter() {
         throw new Error("Suscripción no configurada")
       }
 
+      const { email: safeEmail } = validateNewsletterForm({ email })
+
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -32,8 +35,8 @@ export function Newsletter() {
           access_key: accessKey,
           subject: "[Margora] Nueva suscripción al newsletter",
           from_name: "Newsletter Margora",
-          email: email,
-          message: `Nuevo suscriptor: ${email}`,
+          email: safeEmail,
+          message: `Nuevo suscriptor: ${safeEmail}`,
         }),
       })
 
@@ -87,6 +90,7 @@ export function Newsletter() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    maxLength={254}
                     disabled={isLoading}
                     className="h-14 px-6 rounded-2xl bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary"
                   />

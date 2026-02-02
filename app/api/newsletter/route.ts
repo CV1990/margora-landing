@@ -1,25 +1,11 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { validateNewsletterForm } from "@/lib/form-security"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const email = typeof body?.email === "string" ? body.email.trim() : ""
-
-    if (!email) {
-      return NextResponse.json(
-        { error: "El correo es obligatorio" },
-        { status: 400 }
-      )
-    }
-
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!re.test(email)) {
-      return NextResponse.json(
-        { error: "Correo no válido" },
-        { status: 400 }
-      )
-    }
+    const { email } = validateNewsletterForm(body)
 
     await db.execute(`
       CREATE TABLE IF NOT EXISTS newsletter_subscribers (
@@ -39,9 +25,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true })
     }
     console.error("Newsletter API error:", err)
+    const status = String(message).includes("enlaces") || String(message).includes("obligatorio") || String(message).includes("válido") ? 400 : 500
     return NextResponse.json(
       { error: message },
-      { status: 500 }
+      { status }
     )
   }
 }

@@ -2,18 +2,12 @@ import { NextResponse } from "next/server"
 import { Resend } from "resend"
 import { db } from "@/lib/db"
 import { getResendApiKey, getResendFrom } from "@/lib/env"
+import { validateContactForm } from "@/lib/form-security"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nombre, empresa, correo, mensaje } = body
-
-    if (!nombre || !empresa || !correo || !mensaje) {
-      return NextResponse.json(
-        { error: "Faltan campos: nombre, empresa, correo, mensaje" },
-        { status: 400 }
-      )
-    }
+    const safe = validateContactForm(body)
 
     const from = getResendFrom()
 
@@ -29,10 +23,10 @@ export async function POST(request: Request) {
       )
     `)
 
-    // Guardar en Turso
+    // Guardar en Turso (datos ya sanitizados y validados)
     await db.execute({
       sql: `INSERT INTO contact_submissions (nombre, empresa, correo, mensaje) VALUES (?, ?, ?, ?)`,
-      args: [nombre.trim(), empresa.trim(), correo.trim(), mensaje.trim()],
+      args: [safe.nombre, safe.empresa, safe.correo, safe.mensaje],
     })
 
     // Enviar email con Resend (opcional: si falla, el mensaje ya está guardado en Turso)
@@ -42,14 +36,14 @@ export async function POST(request: Request) {
       const { error } = await resend.emails.send({
         from: from,
         to: [from],
-        subject: `[Margora] Contacto: ${nombre} - ${empresa}`,
+        subject: `[Margora] Contacto: ${safe.nombre} - ${safe.empresa}`,
         html: `
           <h2>Nuevo mensaje de contacto</h2>
-          <p><strong>Nombre:</strong> ${nombre}</p>
-          <p><strong>Empresa:</strong> ${empresa}</p>
-          <p><strong>Correo:</strong> ${correo}</p>
+          <p><strong>Nombre:</strong> ${escapeHtml(safe.nombre)}</p>
+          <p><strong>Empresa:</strong> ${escapeHtml(safe.empresa)}</p>
+          <p><strong>Correo:</strong> ${escapeHtml(safe.correo)}</p>
           <p><strong>Mensaje:</strong></p>
-          <pre>${mensaje}</pre>
+          <pre>${escapeHtml(safe.mensaje)}</pre>
         `,
       })
       if (error) {
@@ -61,9 +55,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error("Contact API error:", err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Error al procesar el mensaje" },
-      { status: 500 }
-    )
+    const message = err instanceof Error ? err.message : "Error al procesar el mensaje"
+    const status = message.includes("enlaces") || message.includes("obligatorio") || message.includes("Máximo") ? 400 : 500
+    return NextResponse.json({ error: message }, { status })
   }
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 }
