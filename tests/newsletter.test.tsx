@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { EnvProvider } from "@/components/env-provider"
 import { Newsletter } from "@/components/newsletter"
 
 describe("Newsletter", () => {
@@ -9,61 +8,42 @@ describe("Newsletter", () => {
     vi.restoreAllMocks()
   })
 
-  it("muestra 'Suscripción no configurada' cuando no hay clave", async () => {
-    const user = userEvent.setup()
-    render(
-      <EnvProvider web3FormsKey={undefined}>
-        <Newsletter />
-      </EnvProvider>
-    )
-    await user.type(screen.getByPlaceholderText(/tu@email\.com/i), "test@test.com")
-    await user.click(screen.getByRole("button", { name: /suscribirse/i }))
-
-    await waitFor(() => {
-      expect(screen.getByText("Suscripción no configurada")).toBeInTheDocument()
-    })
-  })
-
-  it("llama a fetch con el email cuando hay clave", async () => {
+  it("envía el email a /api/newsletter y muestra éxito", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ success: true }), { status: 200 })
+      new Response(JSON.stringify({ ok: true }), { status: 200 })
     )
     const user = userEvent.setup()
-    render(
-      <EnvProvider web3FormsKey="key-newsletter">
-        <Newsletter />
-      </EnvProvider>
-    )
+    render(<Newsletter />)
     await user.type(screen.getByPlaceholderText(/tu@email\.com/i), "user@mail.com")
     await user.click(screen.getByRole("button", { name: /suscribirse/i }))
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith(
-        "https://api.web3forms.com/submit",
+        "/api/newsletter",
         expect.objectContaining({
           method: "POST",
-          body: expect.stringContaining("user@mail.com"),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: "user@mail.com" }),
         })
       )
+    })
+    await waitFor(() => {
+      expect(screen.getByText(/Gracias por suscribirte/i)).toBeInTheDocument()
     })
     fetchSpy.mockRestore()
   })
 
-  it("muestra error cuando la API falla", async () => {
+  it("muestra error cuando la API devuelve error", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ success: false, message: "Límite alcanzado" }), { status: 200 })
+      new Response(JSON.stringify({ error: "Error al guardar" }), { status: 500 })
     )
     const user = userEvent.setup()
-    render(
-      <EnvProvider web3FormsKey="key">
-        <Newsletter />
-      </EnvProvider>
-    )
+    render(<Newsletter />)
     await user.type(screen.getByPlaceholderText(/tu@email\.com/i), "user@test.com")
     await user.click(screen.getByRole("button", { name: /suscribirse/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/Límite alcanzado|Error al suscribirse/i)).toBeInTheDocument()
+      expect(screen.getByText(/Error al guardar|Error al suscribirse/i)).toBeInTheDocument()
     })
     vi.restoreAllMocks()
   })

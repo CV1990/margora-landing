@@ -5,11 +5,9 @@ import { useState } from "react"
 import { Send, CheckCircle, Mail, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useWeb3FormsKey } from "@/components/env-provider"
 import { validateNewsletterForm } from "@/lib/form-security"
 
 export function Newsletter() {
-  const web3FormsKey = useWeb3FormsKey()
   const [email, setEmail] = useState("")
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -21,29 +19,22 @@ export function Newsletter() {
     setIsLoading(true)
 
     try {
-      const accessKey = web3FormsKey
-      if (!accessKey) {
-        throw new Error("Suscripción no configurada")
-      }
-
       const { email: safeEmail } = validateNewsletterForm({ email })
 
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: "[Margora] Nueva suscripción al newsletter",
-          from_name: "Newsletter Margora",
-          email: safeEmail,
-          message: `Nuevo suscriptor: ${safeEmail}`,
-        }),
+        body: JSON.stringify({ email: safeEmail }),
       })
 
       const data = await response.json().catch(() => ({}))
 
-      if (!data.success) {
-        throw new Error(data.message || "Error al suscribirse")
+      if (!response.ok) {
+        throw new Error(data.error || "Error al suscribirse")
+      }
+
+      if (!data.ok) {
+        throw new Error(data.error || "Error al suscribirse")
       }
 
       setIsSubscribed(true)

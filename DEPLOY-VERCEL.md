@@ -46,6 +46,18 @@ En el proyecto de Vercel, ve a **Settings** → **Environment Variables** y aña
 |----------|-------------|
 | `GEMINI_API_KEY` | Para `generate-post` (no hace falta en Vercel) |
 
+#### GitHub Actions (blog-cron: generar post y enviar newsletter)
+
+En **Settings → Secrets and variables → Actions** del repo, configura además (para que el step "Enviar newsletter" funcione):
+
+| Secret | Descripción |
+|--------|-------------|
+| `TURSO_DATABASE_URL` | URL de Turso (ya usado en deploy) |
+| `TURSO_AUTH_TOKEN` | Token Turso |
+| `RESEND_API_KEY` | API key de Resend |
+| `RESEND_FROM` | Email remitente Resend |
+| `SITE_URL` | URL del sitio (ej. `https://margora.com`). Opcional; si no está, se usa `https://margora.com` por defecto |
+
 > **Importante:** Las variables con prefijo `NEXT_PUBLIC_` son accesibles en el cliente. Las demás solo en el servidor (API routes, `lib/db.ts`, etc.).
 
 ### 3. Entornos (Production, Preview, Development)
