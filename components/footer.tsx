@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Linkedin, Twitter, Facebook, Instagram } from "lucide-react"
+import { Linkedin, Facebook, Instagram, Youtube } from "lucide-react"
 
 const footerLinks = {
   servicios: [
@@ -26,15 +26,14 @@ const footerLinks = {
   contacto: [
     { label: "info@margora.com", href: "mailto:info@margora.com" },
     { label: "LinkedIn", href: "#" },
-    { label: "+52 55 1234 5678", href: "tel:+525512345678" },
   ],
 }
 
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/company/margora-ac/", label: "LinkedIn" },
-  { icon: Twitter, href: "#", label: "Twitter" },
   { icon: Facebook, href: "https://www.facebook.com/margoraConsultora", label: "Facebook" },
   { icon: Instagram, href: "https://www.instagram.com/consultoramargora/", label: "Instagram" },
+  { icon: Youtube, href: "https://www.youtube.com/@margora-consult", label: "YouTube" },
 ]
 
 export function Footer() {
