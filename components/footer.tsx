@@ -47,8 +47,8 @@ export function Footer() {
               margora<span className="text-muted-foreground">.</span>
             </Link>
             <p className="text-sm text-muted-foreground mt-5 max-w-xs leading-relaxed">
-              Consultoría de software y transformación digital para empresas que 
-              buscan crecer con tecnología.
+              Empresa de software y proveedor de desarrollo web a la medida. 
+              Sitios web a la medida, consultoría de software y transformación digital.
             </p>
             <div className="flex gap-3 mt-8">
               {socialLinks.map((social, index) => (

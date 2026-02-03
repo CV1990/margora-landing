@@ -17,8 +17,8 @@ export function CTA() {
                 ¿Quieres ser parte del colectivo?
               </h2>
               <p className="text-muted-foreground leading-relaxed text-lg">
-                Somos los artesanos tecnológicos de Margora. En nuestro colectivo, 
-                siempre hay espacio para personas con curiosidad y energía contagiosa.
+                Si buscas <strong>dónde hacer un sitio web a la medida</strong> o un <strong>proveedor de software</strong>, 
+                somos los artesanos tecnológicos de Margora. Desarrollo web a la medida y empresa de software con espacio para quien quiera sumarse.
               </p>
               <Button size="lg" className="group rounded-full px-8 shadow-xl shadow-primary/25">
                 Únete al colectivo

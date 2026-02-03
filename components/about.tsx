@@ -23,9 +23,9 @@ export function About() {
                 Innovación, durabilidad y eficiencia en cada proyecto
               </h2>
               <p className="text-muted-foreground leading-relaxed text-lg">
-                En Margora somos artesanos tecnológicos, una consultora líder que 
-                ayuda a organizaciones a tener éxito en sus transformaciones más 
-                importantes y estratégicas.
+                En Margora somos una <strong>empresa de software</strong> y <strong>proveedor de software</strong> líder. 
+                Si te preguntas quién me puede hacer un sitio web o dónde hacer un sitio web a la medida, 
+                somos la consultora que acompaña a organizaciones en desarrollo web a la medida y transformación digital.
               </p>
             </div>
 

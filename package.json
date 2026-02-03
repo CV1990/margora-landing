@@ -10,6 +10,7 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:web3forms": "node scripts/test-web3forms.js",
     "generate-post": "node scripts/generate-post.js",
     "generate-post:devlocal": "node scripts/generate-post-devlocal.js"
@@ -79,6 +80,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^4.0.18",
     "baseline-browser-mapping": "^2.9.19",
     "cross-env": "^7.0.3",
     "jsdom": "^25.0.1",

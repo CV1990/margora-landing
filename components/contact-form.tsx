@@ -73,7 +73,8 @@ export function ContactForm() {
               Agenda una consulta
             </h2>
             <p className="text-muted-foreground text-lg">
-              Cuéntanos tu proyecto y te respondemos a la brevedad.
+              Si buscas <strong>quién me puede hacer un sitio web</strong> o <strong>dónde hacer un sitio web a la medida</strong>, 
+              cuéntanos tu proyecto y te respondemos a la brevedad.
             </p>
           </div>
 

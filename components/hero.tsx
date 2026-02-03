@@ -34,7 +34,7 @@ export function Hero() {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-card rounded-full border border-border/50 shadow-sm">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-muted-foreground">Consultoría de Software</span>
+                <span className="text-sm font-medium text-muted-foreground">Empresa de Software · Desarrollo Web a la Medida</span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-balance text-foreground drop-shadow-lg">
                 Transformamos ideas en{" "}
@@ -43,9 +43,8 @@ export function Hero() {
             </div>
             
             <p className="text-lg text-foreground/90 max-w-lg leading-relaxed drop-shadow-md font-medium">
-              Somos un colectivo de consultores apasionados y expertos, 
-              unidos por nuestro conocimiento tecnológico profundo y nuestra 
-              pasión por impulsar la transformación empresarial.
+              Somos un <strong>proveedor de software</strong> y <strong>empresa de software</strong>: si buscas quién te haga un sitio web o dónde hacer un sitio web a la medida, 
+              somos tu equipo. Colectivo de consultores expertos en desarrollo web a la medida y transformación digital.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

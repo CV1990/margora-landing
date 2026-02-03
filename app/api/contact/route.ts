@@ -56,7 +56,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("Contact API error:", err)
     const message = err instanceof Error ? err.message : "Error al procesar el mensaje"
-    const status = message.includes("enlaces") || message.includes("obligatorio") || message.includes("Máximo") ? 400 : 500
+    const status = message.includes("enlaces") || message.includes("obligatorio") || message.includes("Máximo") || message === "Required" ? 400 : 500
     return NextResponse.json({ error: message }, { status })
   }
 }

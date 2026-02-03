@@ -50,7 +50,7 @@ const services = [
   {
     icon: Code2,
     title: "Desarrollo a Medida",
-    description: "Aplicaciones web personalizadas con las últimas tecnologías.",
+    description: "Sitio web a la medida y aplicaciones web personalizadas. Desarrollo web a la medida con las últimas tecnologías.",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
   },
   {
@@ -98,7 +98,8 @@ export function Services() {
             Soluciones tecnológicas para cada etapa de tu transformación
           </h2>
           <p className="text-muted-foreground text-lg">
-            Explora cómo ayudamos a las empresas a innovar y crecer.
+            Como <strong>empresa de software</strong> y <strong>proveedor de desarrollo web a la medida</strong>, 
+            ofrecemos sitios web a la medida, desarrollo de software y apps. ¿Buscas quién te haga un sitio web? Aquí lo tienes.
           </p>
         </div>
 
