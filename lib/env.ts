@@ -8,6 +8,7 @@
  * Servidor:
  * - TURSO_DATABASE_URL, TURSO_AUTH_TOKEN → Turso/libSQL (API contact, newsletter)
  * - RESEND_API_KEY, RESEND_FROM → envío de emails (API contact)
+ * - PODCAST_FEED_URL → URL del feed RSS del podcast (API podcast)
  *
  * Scripts (Node, no usan este módulo):
  * - GEMINI_API_KEY → scripts/generate-post.js
@@ -36,4 +37,9 @@ export function getResendApiKey(): string | undefined {
 /** Email remitente verificado en Resend (servidor). */
 export function getResendFrom(): string {
   return process.env.RESEND_FROM ?? ""
+}
+
+/** URL del feed RSS del podcast (servidor). Para sección Podcast en la web. */
+export function getPodcastFeedUrl(): string | undefined {
+  return process.env.PODCAST_FEED_URL
 }

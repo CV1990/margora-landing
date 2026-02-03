@@ -13,13 +13,15 @@ const navLinks = [
   { href: "#metodologias", label: "Metodologías" },
   { href: "#testimonios", label: "Testimonios" },
   { href: "#blog", label: "Blog" },
+  { href: "/podcast", label: "Podcast" },
   { href: "#contacto-formulario", label: "Contacto" },
 ]
 
-const sectionIds = navLinks.map((l) => l.href.slice(1))
+const sectionIds = navLinks.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1))
 
-function navHref(hashLink: string, pathname: string | null) {
-  return pathname === "/" ? hashLink : `/${hashLink}`
+function navHref(href: string, pathname: string | null) {
+  if (href.startsWith("/")) return href
+  return pathname === "/" ? href : `/${href.slice(1)}`
 }
 
 function clearSelectionAndFadeBar(
@@ -71,7 +73,14 @@ export function Header() {
   }, [activeSection])
 
   useEffect(() => {
-    if (pathname !== "/") return
+    if (pathname === "/podcast") {
+      setActiveSection("/podcast")
+      return
+    }
+    if (pathname !== "/") {
+      setActiveSection("")
+      return
+    }
     const observers: IntersectionObserver[] = []
     const observer = new IntersectionObserver(
       (entries) => {
@@ -151,7 +160,7 @@ export function Header() {
                 href={navHref(link.href, pathname)}
                 onClick={() => setActiveSection(link.href)}
                 className={`relative text-sm font-medium transition-colors ${
-                  activeSection === link.href
+                  activeSection === link.href || (link.href.startsWith("/") && pathname === link.href)
                     ? "text-foreground font-bold"
                     : "text-muted-foreground hover:text-foreground"
                 }`}

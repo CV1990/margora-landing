@@ -1,4 +1,3 @@
-import DOMPurify from "isomorphic-dompurify"
 import { z } from "zod"
 
 // --- Límites de longitud (evitar payloads enormes) ---
@@ -7,16 +6,13 @@ const MAX_EMPRESA = 200
 const MAX_CORREO = 254
 const MAX_MENSAJE = 5000
 
-/** Elimina HTML/scripts para prevenir XSS. Devuelve texto plano seguro. */
+/** Elimina HTML/scripts para prevenir XSS. Devuelve texto plano seguro. Sin dependencia de isomorphic-dompurify (evita ESM/require en Next.js). */
 export function sanitizeText(input: string): string {
   if (typeof input !== "string") return ""
   const trimmed = input.trim()
-  try {
-    const cleaned = DOMPurify.sanitize(trimmed, { ALLOWED_TAGS: [] })
-    return cleaned.trim()
-  } catch {
-    return trimmed.replace(/<[^>]*>/g, "").trim()
-  }
+  const noTags = trimmed.replace(/<[^>]*>/g, "")
+  const noScript = noTags.replace(/javascript:/gi, "").replace(/on\w+\s*=/gi, "")
+  return noScript.trim()
 }
 
 /**

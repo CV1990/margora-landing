@@ -3,7 +3,7 @@
 ## Implementado en este proyecto
 
 - **Validación de entradas** (Zod): formato, longitud máxima, tipos.
-- **Sanitización XSS** (isomorphic-dompurify): se elimina HTML/scripts en todos los campos de texto.
+- **Sanitización XSS** (lib/form-security): se elimina HTML y patrones de script en todos los campos de texto (sin dependencias ESM problemáticas).
 - **Bloqueo de enlaces**: no se aceptan URLs en ningún campo (http, https, www, dominios .com/.net/etc.).
 - **Límites de longitud**: nombre 120, empresa 200, correo 254, mensaje 5000 caracteres.
 - **Validación en servidor**: las API routes `/api/contact` y `/api/newsletter` usan los mismos esquemas y sanitización.
@@ -32,7 +32,7 @@
 | Uso | Librería | Notas |
 |-----|----------|--------|
 | Validación de formularios | **Zod** | Esquemas, tipos, mensajes de error. |
-| Sanitización XSS | **isomorphic-dompurify** | Funciona en cliente y en API routes (Node). |
+| Sanitización XSS | **form-security.ts** (regex + strip tags) | Funciona en API routes (Node) sin dependencias ESM. |
 | Monitoreo de dependencias | **npm audit** | `npm audit` y Dependabot en GitHub. |
 | Headers de seguridad | **Next.js config** | `headers()` en `next.config.mjs`. |
 | Monitoreo en producción | **Vercel Analytics** | Ya en el proyecto; útil para uso y errores. |

@@ -21,8 +21,14 @@ type Post = {
   content: string
 }
 
+/** Categorías del blog: solo negocios, tecnología y noticias (sin backend, frontend, bases de datos, etc.). */
+const BLOG_ALLOWED_CATEGORIES = ["Tech News", "Negocios", "Tendencias"]
+
 export function Blog() {
-  const posts2026 = (posts as Post[]).filter((p) => p.date.includes("2026"))
+  const allPosts = posts as Post[]
+  const postsFiltered = allPosts.filter(
+    (p) => p.date.includes("2026") && BLOG_ALLOWED_CATEGORIES.includes(p.category)
+  )
 
   return (
     <section id="blog" className="py-32 bg-background relative scroll-mt-20">
@@ -33,15 +39,15 @@ export function Blog() {
             Blog
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-foreground">
-            Ideas y tendencias en tecnología
+            Negocios, tecnología y noticias
           </h2>
           <p className="text-muted-foreground text-lg">
-            Artículos sobre e-commerce, arquitectura de software y transformación digital.
+            Novedades tecnológicas, tendencias y noticias para empresas. Sin contenido técnico de backend ni desarrollo.
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts2026.map((post) => (
+          {postsFiltered.map((post) => (
             <Link
               key={post.id}
               href={`/blog/${post.id}`}
@@ -78,9 +84,9 @@ export function Blog() {
           ))}
         </div>
 
-        {posts2026.length === 0 && (
+        {postsFiltered.length === 0 && (
           <p className="text-center text-muted-foreground py-12">
-            Próximamente nuevos artículos. Revisa más adelante.
+            Próximamente nuevos artículos sobre tecnología y negocios. Revisa más adelante.
           </p>
         )}
       </div>

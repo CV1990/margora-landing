@@ -4,31 +4,24 @@ const path = require("path")
 const { GoogleGenerativeAI } = require("@google/generative-ai")
 
 function getTopicOfTheDay() {
+  // Solo temas de negocios, tecnología y noticias (sin backend, código ni arquitectura técnica).
   const categories = {
-    javascript: [
-      "Optimización de renders en React 19",
-      "Patrones avanzados de Web Components para CDNs",
-      "Gestión de estado: Cuándo salir de Redux y usar Context o Zustand"
-    ],
-    java: [
-      "Arquitectura de Microservicios con Spring Boot y Java 21",
-      "Seguridad en APIs: Implementando OAuth2 y JWT",
-      "Testing integral: De JUnit a Testcontainers para bases de datos"
-    ],
-    python_ai: [
-      "Automatización de flujos de trabajo con Python y APIs de IA",
-      "Scraping ético y análisis de precios en Mercado Libre con Python",
-      "Despliegue de modelos de lenguaje en Cloudflare Workers"
-    ],
-    databases: [
-      "Turso y libSQL: El futuro de las bases de datos en el Edge",
-      "PostgreSQL vs SQLite: Cuándo priorizar la latencia sobre la consistencia",
-      "Modelado de datos para sistemas de inventario en tiempo real"
-    ],
-    news_trends: [
-      "Análisis de las novedades en el ecosistema Web (noticia del día)",
+    tech_news: [
+      "Novedades del ecosistema web y su impacto en empresas",
+      "El impacto de la computación espacial (XR) en las ventas online",
+      "Tendencias de IA en el negocio: qué deben saber las empresas",
       "Nuevas regulaciones de e-commerce y cómo la tecnología debe adaptarse",
-      "El impacto de la computación espacial (XR) en las ventas online"
+      "Noticias sobre startups y financiamiento tecnológico"
+    ],
+    negocios: [
+      "Cómo las empresas adoptan nuevas tecnologías sin ser expertas en código",
+      "Transformación digital: casos de éxito en retail y servicios",
+      "Tendencias de marketing digital y herramientas no técnicas para equipos"
+    ],
+    tendencias: [
+      "Tendencias en herramientas low-code y no-code para negocios",
+      "El futuro del trabajo remoto y las herramientas colaborativas",
+      "Sostenibilidad y tecnología: qué están haciendo las empresas"
     ]
   }
   const catKeys = Object.keys(categories)
@@ -39,27 +32,26 @@ function getTopicOfTheDay() {
 
 function buildPrompt() {
   return `
-Actúa como un CTO y Arquitecto de Software líder en "Margora".
-Tu misión es documentar el ecosistema tecnológico actual y tendencias de negocio.
+Actúa como experto en negocios y tecnología en "Margora".
+Tu misión es escribir sobre novedades tecnológicas, tendencias y noticias para empresas. NO escribas sobre implementación técnica, backend, código ni arquitectura de software.
 
 ESTRUCTURA DE SALIDA (JSON ESTRICTO):
 {
   "id": "slug-url-amigable",
-  "title": "Título SEO (ej: 'Guía de...', 'Por qué usar...', 'Novedades en...')",
+  "title": "Título SEO (ej: 'Novedades en...', 'Cómo las empresas...', 'Tendencias de...')",
   "date": "${new Date().toISOString()}",
-  "category": "Elegir entre: Frontend, Backend, Architecture, Databases, AI Automation o Tech News",
-  "excerpt": "Meta-descripción de 150 caracteres para SEO técnico.",
-  "content": "Contenido en HTML (<h3>, <p>, <strong>, <ul>, <li>, <pre><code> para snippets). Mínimo 800 palabras."
+  "category": "Elegir ÚNICAMENTE entre: Tech News, Negocios o Tendencias",
+  "excerpt": "Meta-descripción de 150 caracteres para SEO.",
+  "content": "Contenido en HTML (<h3>, <p>, <strong>, <ul>, <li>). Mínimo 600 palabras. NO incluyas bloques de código (<pre><code>)."
 }
 
 CONTEXTO DEL TEMA:
 Hoy escribirás sobre: ${getTopicOfTheDay()}
 
-DIRECTRICES TÉCNICAS:
-1. Si es documentación (JS, Java, Python): Incluye un ejemplo de código práctico (<pre><code>).
-2. Si es noticia/tendencia: Analiza el impacto para empresas de E-commerce.
-3. Si es arquitectura: Usa conceptos de Clean Architecture o patrones de diseño.
-4. Tono: De experto a experto (Tech Lead), pero con visión de negocio para Margora.
+DIRECTRICES:
+1. Enfoque: impacto en negocios, noticias del sector, tendencias. Nada de guías de programación ni ejemplos de código.
+2. Tono: accesible para dueños de negocio y equipos no técnicos; visión estratégica.
+3. Evita jerga de desarrollo (APIs, backend, bases de datos, frameworks). Habla de herramientas, productos y tendencias por nombre cuando sea relevante.
 
 IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. Sin markdown, sin \`\`\`json. Solo el JSON.
 `

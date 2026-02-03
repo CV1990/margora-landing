@@ -1,8 +1,9 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import { EnvProvider } from '@/components/env-provider'
+import { CookieConsentBanner } from '@/components/cookie-consent-banner'
+import { AnalyticsWithConsent } from '@/components/analytics-with-consent'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -118,7 +119,8 @@ export default function RootLayout({
         />
         <EnvProvider web3FormsKey={web3FormsKey}>
           {children}
-          <Analytics />
+          <CookieConsentBanner />
+          <AnalyticsWithConsent />
         </EnvProvider>
       </body>
     </html>

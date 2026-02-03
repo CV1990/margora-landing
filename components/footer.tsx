@@ -133,13 +133,13 @@ export function Footer() {
 
         <div className="border-t border-border/50 mt-16 pt-10 flex flex-col sm:flex-row justify-between items-center gap-6">
           <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-            <Link href="#" className="hover:text-primary transition-colors">
+            <Link href="/politica-privacidad" className="hover:text-primary transition-colors">
               Política de Privacidad
             </Link>
             <Link href="#" className="hover:text-primary transition-colors">
               Términos de Servicio
             </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
+            <Link href="/cookies" className="hover:text-primary transition-colors">
               Cookies
             </Link>
           </div>

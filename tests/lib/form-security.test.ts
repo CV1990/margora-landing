@@ -27,7 +27,7 @@ describe("form-security", () => {
       expect(sanitizeText("  foo  ")).toBe("foo")
     })
 
-    it("usa fallback regex si DOMPurify falla", () => {
+    it("elimina tags HTML y deja solo texto plano", () => {
       const html = "<p>solo texto</p>"
       expect(sanitizeText(html)).toMatch(/solo texto/)
       expect(sanitizeText(html)).not.toMatch(/<p>/)
