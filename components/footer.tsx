@@ -3,29 +3,29 @@ import { Linkedin, Facebook, Instagram, Youtube } from "lucide-react"
 
 const footerLinks = {
   servicios: [
-    { label: "Landing Pages", href: "#" },
-    { label: "E-Commerce", href: "#" },
-    { label: "Experiencias XR", href: "#" },
-    { label: "Migración AWS", href: "#" },
-    { label: "Apps Móviles", href: "#" },
-    { label: "Desarrollo Web", href: "#" },
+    { label: "Landing Pages", href: "/servicios/landing-pages" },
+    { label: "E-Commerce", href: "/servicios/e-commerce" },
+    { label: "Experiencias XR", href: "/servicios/experiencias-xr" },
+    { label: "Migración AWS", href: "/servicios/migracion-aws" },
+    { label: "Apps Móviles", href: "/servicios/apps-moviles" },
+    { label: "Desarrollo Web", href: "/servicios/desarrollo-web" },
   ],
   empresa: [
-    { label: "Sobre Nosotros", href: "#nosotros" },
-    { label: "Metodologías", href: "#metodologias" },
-    { label: "Casos de Éxito", href: "#" },
-    { label: "Equipo", href: "#" },
-    { label: "Carreras", href: "#" },
+    { label: "Sobre Nosotros", href: "/#nosotros" },
+    { label: "Metodologías", href: "/#metodologias" },
+    { label: "Casos de Éxito", href: "/empresa/casos-de-exito" },
+    { label: "Equipo", href: "/empresa/equipo" },
+    { label: "Carreras", href: "/empresa/carreras" },
   ],
   recursos: [
-    { label: "Blog", href: "#blog" },
-    { label: "Documentación", href: "#" },
-    { label: "Webinars", href: "#" },
-    { label: "Newsletter", href: "#contacto" },
+    { label: "Blog", href: "/#blog" },
+    { label: "Documentación", href: "/recursos/documentacion" },
+    { label: "Webinars", href: "/recursos/webinars" },
+    { label: "Newsletter", href: "/#newsletter" },
   ],
   contacto: [
     { label: "info@margora.com", href: "mailto:info@margora.com" },
-    { label: "LinkedIn", href: "#" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/margora-ac/" },
   ],
 }
 
@@ -118,12 +118,23 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.contacto.map((link, index) => (
                 <li key={index}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+                  {link.href.startsWith("http") ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -135,7 +146,7 @@ export function Footer() {
             <Link href="/politica-privacidad" className="hover:text-primary transition-colors">
               Política de Privacidad
             </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
+            <Link href="/terminos-de-servicio" className="hover:text-primary transition-colors">
               Términos de Servicio
             </Link>
             <Link href="/cookies" className="hover:text-primary transition-colors">

@@ -47,7 +47,7 @@ export function Newsletter() {
   }
 
   return (
-    <section id="contacto" className="py-32 bg-secondary/30 relative overflow-hidden">
+    <section id="newsletter" className="py-32 bg-secondary/30 relative overflow-hidden scroll-mt-20">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-2xl mx-auto">
