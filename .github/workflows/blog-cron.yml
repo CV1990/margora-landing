@@ -1,9 +1,10 @@
 name: Margora CI/CD - Auto Blog & Deploy
+# Horario: 16:00 UTC = 10:00 AM México (hora central). El workflow debe estar en main y habilitado en Actions.
 on:
   push:
     branches: [ main ]
   schedule:
-    - cron: '0 16 * * *'  # 10:00 AM México (UTC-6) 
+    - cron: '0 16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -29,9 +30,11 @@ jobs:
         run: npm ci
 
       - name: 5. Generar Post (IA)
+        id: generate-post
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-post.js
+        continue-on-error: true
 
       - name: 5b. Enviar newsletter (último post a suscriptores)
         env:
@@ -49,14 +52,22 @@ jobs:
         run: npm run build
 
       - name: 7. Guardar cambios en el Repo
+        id: commit
         run: |
           git config --global user.name "Margora AutoBot"
           git config --global user.email "bot@margora.com"
           git add data/posts.json
-          git diff --staged --quiet || (git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push)
+          if git diff --staged --quiet; then
+            echo "committed=false" >> $GITHUB_OUTPUT
+            echo "No hay cambios en posts.json (no se generó post nuevo)."
+          else
+            git commit -m "Automated Blog Post: $(date -u +%Y-%m-%d)" && git push
+            echo "committed=true" >> $GITHUB_OUTPUT
+          fi
 
-      # Si falla "chat not found": inicia el bot con /start en Telegram y usa tu chat_id en TELEGRAM_TO
+      # Solo si se generó y subió un post nuevo
       - name: 8. Notificar en Telegram
+        if: steps.commit.outputs.committed == 'true'
         uses: appleboy/telegram-action@master
         continue-on-error: true
         with:

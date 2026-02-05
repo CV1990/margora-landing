@@ -48,15 +48,19 @@ En el proyecto de Vercel, ve a **Settings** → **Environment Variables** y aña
 
 #### GitHub Actions (blog-cron: generar post y enviar newsletter)
 
-En **Settings → Secrets and variables → Actions** del repo, configura además (para que el step "Enviar newsletter" funcione):
+En **Settings → Secrets and variables → Actions** del repo configura estos secrets. El workflow se ejecuta cada día a las **16:00 UTC (10:00 AM México)** y también en cada push a `main` o al dispararlo manualmente (Actions → Margora CI/CD → Run workflow).
 
-| Secret | Descripción |
-|--------|-------------|
-| `TURSO_DATABASE_URL` | URL de Turso (ya usado en deploy) |
-| `TURSO_AUTH_TOKEN` | Token Turso |
-| `RESEND_API_KEY` | API key de Resend |
-| `RESEND_FROM` | Email remitente Resend |
-| `SITE_URL` | URL del sitio (ej. `https://margora.com`). Opcional; si no está, se usa `https://margora.com` por defecto |
+| Secret | Descripción | Necesario para |
+|--------|-------------|-----------------|
+| `GEMINI_API_KEY` | API key de Google AI (Gemini). Obtener en [Google AI Studio](https://aistudio.google.com/apikey). | Crear nuevo post del blog |
+| `TURSO_DATABASE_URL` | URL de Turso (ya usado en deploy) | Newsletter y commit |
+| `TURSO_AUTH_TOKEN` | Token Turso | Newsletter |
+| `RESEND_API_KEY` | API key de Resend | Enviar correos del newsletter |
+| `RESEND_FROM` | Email remitente verificado en Resend | Enviar correos |
+| `SITE_URL` | URL del sitio (ej. `https://margora.com`). Opcional. | Links en el email |
+| `NEXT_PUBLIC_WEB3FORMS_KEY` | Para el build en CI | Build |
+
+**Si no se crea el blog ni se envía el newsletter:** (1) Comprueba que el workflow está **habilitado** en la pestaña Actions (no "disabled"). (2) Asegúrate de tener `GEMINI_API_KEY` para que se genere el post; si falta, igual se envía el newsletter con el último post y se hace build. (3) El cron solo corre desde la rama por defecto (`main`).
 
 > **Importante:** Las variables con prefijo `NEXT_PUBLIC_` son accesibles en el cliente. Las demás solo en el servidor (API routes, `lib/db.ts`, etc.).
 
