@@ -1,10 +1,11 @@
 name: Margora CI/CD - Auto Blog & Deploy
-# Horario: 16:00 UTC = 10:00 AM México (hora central). El workflow debe estar en main y habilitado en Actions.
+# Horario: 16:00 y 17:00 UTC = 10:00 y 11:00 AM México. Segundo horario por si GitHub no ejecuta el primero.
 on:
   push:
     branches: [ main ]
   schedule:
     - cron: '0 16 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
 
 permissions:
