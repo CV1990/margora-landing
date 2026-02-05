@@ -15,6 +15,34 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: 0. Diagnóstico de secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          PODCAST_FEED_URL: ${{ secrets.PODCAST_FEED_URL }}
+        run: |
+          echo "::group::Comprobación de secrets (sin mostrar valores)"
+          check() { [ -n "$1" ] && echo "  OK" || echo "  FALTA"; }
+          echo -n "GEMINI_API_KEY (generar post):"; check "$GEMINI_API_KEY"
+          echo -n "TURSO_DATABASE_URL (newsletter):"; check "$TURSO_DATABASE_URL"
+          echo -n "TURSO_AUTH_TOKEN (newsletter):"; check "$TURSO_AUTH_TOKEN"
+          echo -n "RESEND_API_KEY (enviar correos):"; check "$RESEND_API_KEY"
+          echo -n "RESEND_FROM (remitente):"; check "$RESEND_FROM"
+          echo -n "PODCAST_FEED_URL (newsletter podcast):"; check "$PODCAST_FEED_URL"
+          echo "::endgroup::"
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::warning::GEMINI_API_KEY no configurado: no se generará post nuevo. Configura en Settings → Secrets → Actions."
+          fi
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$RESEND_FROM" ]; then
+            echo "::warning::RESEND_API_KEY o RESEND_FROM no configurados: no se enviarán correos del newsletter."
+          fi
+          if [ -z "$PODCAST_FEED_URL" ]; then
+            echo "::warning::PODCAST_FEED_URL no configurado: no se enviará correo al subir episodios al podcast."
+          fi
+
       - name: 1. Checkout del código
         uses: actions/checkout@v4
 
@@ -37,7 +65,8 @@ jobs:
         run: node scripts/generate-post.js
         continue-on-error: true
 
-      - name: 5b. Enviar newsletter (último post a suscriptores)
+      - name: 5b. Enviar newsletter blog (solo si se generó post nuevo)
+        if: steps.generate-post.outcome == 'success'
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
@@ -45,6 +74,16 @@ jobs:
           RESEND_FROM: ${{ secrets.RESEND_FROM }}
           SITE_URL: ${{ secrets.SITE_URL }}
         run: node scripts/send-newsletter.js
+
+      - name: 5c. Enviar newsletter podcast (si hay episodio nuevo)
+        env:
+          PODCAST_FEED_URL: ${{ secrets.PODCAST_FEED_URL }}
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: node scripts/send-podcast-newsletter.js
         continue-on-error: true
 
       - name: 6. Build de Next.js

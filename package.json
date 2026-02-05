@@ -15,7 +15,8 @@
     "generate-post": "node scripts/generate-post.js",
     "generate-post:devlocal": "node scripts/generate-post-devlocal.js",
     "send-newsletter": "node scripts/send-newsletter.js",
-    "send-newsletter:devlocal": "node scripts/send-newsletter-devlocal.js"
+    "send-newsletter:devlocal": "node scripts/send-newsletter-devlocal.js",
+    "send-podcast-newsletter": "node scripts/send-podcast-newsletter.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
