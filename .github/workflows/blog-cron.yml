@@ -65,8 +65,7 @@ jobs:
         run: node scripts/generate-post.js
         continue-on-error: true
 
-      - name: 5b. Enviar newsletter blog (solo si se generó post nuevo)
-        if: steps.generate-post.outcome == 'success'
+      - name: 5b. Enviar newsletter blog (siempre con el último post)
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}

@@ -88,6 +88,24 @@ function extractJson(text) {
   return JSON.parse(raw)
 }
 
+async function getTextFromResponse(result) {
+  if (!result || !result.response) return null
+  try {
+    if (typeof result.response.text === "function") {
+      const out = result.response.text()
+      return typeof out?.then === "function" ? await out : out
+    }
+    const c = result.response.candidates
+    if (c && c[0] && c[0].content && c[0].content.parts && c[0].content.parts[0]) {
+      const part = c[0].content.parts[0]
+      return part.text != null ? part.text : null
+    }
+  } catch (_) {}
+  return null
+}
+
+const GEMINI_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro"]
+
 async function main() {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -96,15 +114,30 @@ async function main() {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-
   const prompt = buildPrompt()
-  const result = await generateWithRetry(model, prompt)
-  const text = result.response ? result.response.text() : null
+
+  let text = null
+  let usedModel = null
+
+  for (const modelId of GEMINI_MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelId })
+      const result = await generateWithRetry(model, prompt)
+      text = await getTextFromResponse(result)
+      if (text) {
+        usedModel = modelId
+        break
+      }
+    } catch (err) {
+      console.warn(`Modelo ${modelId} falló:`, err.message)
+    }
+  }
+
   if (!text) {
-    console.error("Gemini no devolvió texto.")
+    console.error("Ningún modelo Gemini devolvió texto. Revisa GEMINI_API_KEY y la API de Google AI.")
     process.exit(1)
   }
+  if (usedModel) console.log("Modelo usado:", usedModel)
 
   let post
   try {

@@ -133,6 +133,7 @@ async function main() {
     console.error("No hay ningún post en posts.json")
     process.exit(1)
   }
+  console.log("Enviando último post:", post.id, "| fecha:", post.date || "(sin fecha)")
 
   const postUrl = `${SITE_URL.replace(/\/$/, "")}/blog/${post.id}`
 
@@ -158,7 +159,7 @@ async function main() {
 
   const { Resend } = require("resend")
   const resend = new Resend(resendKey)
-  const subject = "Margora Newsletter"
+  const subject = `Margora Newsletter: ${post.title}`
   const html = buildEmailHtml(post, postUrl)
 
   let sent = 0
