@@ -1,11 +1,15 @@
 name: Margora CI/CD - Auto Blog & Deploy
-# Horario: 16:00 y 17:00 UTC = 10:00 y 11:00 AM México. Segundo horario por si GitHub no ejecuta el primero.
+# Horarios en México (UTC-6): 9h, 12h, 15h, 18h, 21h, 22h
 on:
   push:
     branches: [ main ]
   schedule:
-    - cron: '0 16 * * *'
-    - cron: '0 17 * * *'
+    - cron: '0 15 * * *'   # 9:00 AM México
+    - cron: '0 18 * * *'   # 12:00 PM México
+    - cron: '0 21 * * *'   # 3:00 PM México
+    - cron: '0 0 * * *'    # 6:00 PM México (00:00 UTC)
+    - cron: '0 3 * * *'    # 9:00 PM México
+    - cron: '0 4 * * *'    # 10:00 PM México
   workflow_dispatch:
 
 permissions:
