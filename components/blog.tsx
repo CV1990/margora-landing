@@ -26,8 +26,9 @@ const BLOG_ALLOWED_CATEGORIES = ["Tech News", "Negocios", "Tendencias"]
 
 export function Blog() {
   const allPosts = posts as Post[]
+  const currentYear = new Date().getFullYear().toString()
   const postsFiltered = allPosts.filter(
-    (p) => p.date.includes("2026") && BLOG_ALLOWED_CATEGORIES.includes(p.category)
+    (p) => p.date.includes(currentYear) && BLOG_ALLOWED_CATEGORIES.includes(p.category)
   )
 
   return (
