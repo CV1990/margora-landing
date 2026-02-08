@@ -153,9 +153,15 @@ async function main() {
   const emails = (result.rows || []).map((r) => r.email).filter(Boolean)
 
   if (emails.length === 0) {
-    console.log("No hay suscriptores. No se envía ningún correo.")
+    console.log("")
+    console.log("::warning:: No hay suscriptores en la base de datos. No se envió ningún correo.")
+    console.log("Comprueba: 1) Que el formulario de newsletter en la web guarde en Turso (API /api/newsletter).")
+    console.log("2) Que TURSO_DATABASE_URL y TURSO_AUTH_TOKEN en GitHub Actions sean los MISMOS que en Vercel.")
+    console.log("")
     process.exit(0)
   }
+
+  console.log("Suscriptores a los que se enviará:", emails.length)
 
   const { Resend } = require("resend")
   const resend = new Resend(resendKey)

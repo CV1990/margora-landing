@@ -62,7 +62,7 @@ En **Settings → Secrets and variables → Actions** del repo configura estos s
 | `NEXT_PUBLIC_WEB3FORMS_KEY` | Para el build en CI | Build |
 
 **Comportamiento de los correos:**  
-- **Blog:** Se envía un correo a los suscriptores **solo cuando se genera un post nuevo** (paso de IA exitoso).  
+- **Blog:** En cada ejecución se envía un correo con el **último post** de data/posts.json (paso de IA exitoso).  
 - **Podcast:** Se consulta el feed RSS; si el último episodio es distinto al último ya notificado, se envía un correo con el nuevo episodio. El estado “último notificado” se guarda en Turso.
 
 > **Importante:** Las variables con prefijo `NEXT_PUBLIC_` son accesibles en el cliente. Las demás solo en el servidor (API routes, `lib/db.ts`, etc.).
@@ -86,6 +86,19 @@ En **Settings → Secrets and variables → Actions** del repo configura estos s
 
 5. **El cron no ha corrido**  
    Los cron de GitHub pueden retrasarse. Para tener post y newsletter ya, usa **Run workflow** manual.
+
+### Si generaste un post pero no llegó el correo
+
+1. **Revisa el log del paso "5b. Enviar newsletter blog"** en la última ejecución del workflow (Actions → clic en la ejecución). Ahí verás:
+   - **"Enviando último post: &lt;id&gt;"** – se está usando ese post.
+   - **"Suscriptores a los que se enviará: N"** – si N es 0, no se envía nada.
+   - **"::warning:: No hay suscriptores"** – la tabla `newsletter_subscribers` en Turso está vacía para la base que usa GitHub Actions.
+
+2. **Misma base Turso en Vercel y en Actions**  
+   Los emails se guardan cuando alguien se suscribe por el formulario de la web (API que escribe en Turso). El script del newsletter lee de esa misma base. Si en **GitHub Actions** usas otro `TURSO_DATABASE_URL` o `TURSO_AUTH_TOKEN` que en **Vercel**, la base en CI puede estar vacía. Usa exactamente los mismos valores en **Settings → Secrets → Actions** que en Vercel (Environment Variables).
+
+3. **Revisa spam y dominio en Resend**  
+   El remitente (`RESEND_FROM`) debe ser un dominio verificado en [Resend](https://resend.com). Si no, los correos pueden no entregarse o ir a spam.
 
 ### 3. Entornos (Production, Preview, Development)
 
