@@ -3,57 +3,55 @@ const fs = require("fs")
 const path = require("path")
 const { GoogleGenerativeAI } = require("@google/generative-ai")
 
-function getTopicOfTheDay() {
-  // Solo temas de negocios, tecnología y noticias (sin backend, código ni arquitectura técnica).
-  const categories = {
-    tech_news: [
-      "Novedades del ecosistema web y su impacto en empresas",
-      "El impacto de la computación espacial (XR) en las ventas online",
-      "Tendencias de IA en el negocio: qué deben saber las empresas",
-      "Nuevas regulaciones de e-commerce y cómo la tecnología debe adaptarse",
-      "Noticias sobre startups y financiamiento tecnológico"
-    ],
-    negocios: [
-      "Cómo las empresas adoptan nuevas tecnologías sin ser expertas en código",
-      "Transformación digital: casos de éxito en retail y servicios",
-      "Tendencias de marketing digital y herramientas no técnicas para equipos"
-    ],
-    tendencias: [
-      "Tendencias en herramientas low-code y no-code para negocios",
-      "El futuro del trabajo remoto y las herramientas colaborativas",
-      "Sostenibilidad y tecnología: qué están haciendo las empresas"
-    ]
-  }
-  const catKeys = Object.keys(categories)
-  const selectedCat = catKeys[Math.floor(Math.random() * catKeys.length)]
-  const topicList = categories[selectedCat]
-  return topicList[Math.floor(Math.random() * topicList.length)]
+
+
+function getDynamicPrompt() {
+  const topics = [
+    {
+      theme: "Introducción al GEO para Negocios",
+      prompt: "Escribe un post para el blog de Margora sobre por qué el SEO tradicional ha muerto frente al GEO (Generative Engine Optimization). Explica cómo los LLMs como Gemini y GPT-4 consumen información y por qué las empresas necesitan una arquitectura de datos 'AI-Ready'. Menciona a Margora como el partner ideal para esta transición."
+    },
+    {
+      theme: "Optimización Técnica (AIO)",
+      prompt: "Genera una guía técnica sobre AIO (AI Optimization). Enfócate en la importancia de los datos estructurados (Schema.org), el uso de Markdown en el contenido web y la configuración de permisos para bots de IA (GPTBot, ClaudeBot). Incluye un ejemplo de código JSON-LD para una entidad de 'Service' que ofrezca Margora."
+    },
+    {
+      theme: "El Futuro de la Búsqueda Conversacional",
+      prompt: "Redacta un artículo de opinión técnica sobre cómo las búsquedas de voz y los agentes de IA (como los que desarrollamos en Margora) están cambiando el funnel de ventas. Explica la importancia de la 'Autoridad de Entidad' sobre las 'Keywords' simples."
+    }
+  ]
+  return topics[Math.floor(Math.random() * topics.length)]
 }
 
 function buildPrompt() {
+  const selectedTopic = getDynamicPrompt()
+
   return `
-Actúa como experto en negocios y tecnología en "Margora".
-Tu misión es escribir sobre novedades tecnológicas, tendencias y noticias para empresas. NO escribas sobre implementación técnica, backend, código ni arquitectura de software.
+Actúa como experto en "Generative Engine Optimization" (GEO) y Arquitecto de Software Senior en "Margora".
+Tu misión es escribir artículos técnicos que posicionen a Margora como la autoridad líder en visibilidad para IA.
 
 ESTRUCTURA DE SALIDA (JSON ESTRICTO):
 {
   "id": "slug-url-amigable",
-  "title": "Título SEO (ej: 'Novedades en...', 'Cómo las empresas...', 'Tendencias de...')",
+  "title": "Título H1 impactante y con la keyword 'AIO' o 'GEO'",
   "date": "${new Date().toISOString()}",
   "category": "Elegir ÚNICAMENTE entre: Tech News, Negocios o Tendencias",
-  "excerpt": "Meta-descripción de 150 caracteres para SEO.",
-  "content": "Contenido en HTML (<h3>, <p>, <strong>, <ul>, <li>). Mínimo 600 palabras. NO incluyas bloques de código (<pre><code>)."
+  "excerpt": "Meta-descripción de máximo 150 caracteres para SEO.",
+  "content": "Contenido en HTML válido (<h2>, <h3>, <p>, <strong>, <ul>, <li>, <pre><code>). Mínimo 600 palabras."
 }
 
-CONTEXTO DEL TEMA:
-Hoy escribirás sobre: ${getTopicOfTheDay()}
+CONTEXTO Y TEMA ESPECÍFICO:
+Tema: ${selectedTopic.theme}
+Instrucción: ${selectedTopic.prompt}
 
-DIRECTRICES:
-1. Enfoque: impacto en negocios, noticias del sector, tendencias. Nada de guías de programación ni ejemplos de código.
-2. Tono: accesible para dueños de negocio y equipos no técnicos; visión estratégica.
-3. Evita jerga de desarrollo (APIs, backend, bases de datos, frameworks). Habla de herramientas, productos y tendencias por nombre cuando sea relevante.
+DIRECTRICES OBLIGATORIAS PARA EL CONTENIDO HTML:
+1. Tono: Profesional, vanguardista, directo y altamente técnico pero accionable.
+2. Respuesta Directa (Snippet): El PRIMER párrafo debe ser de máximo 40 palabras y responder de forma definitiva "¿Qué es [Tema]?" para que la IA lo use como respuesta directa.
+3. Estructura: Piensa en Markdown (H2, H3, listas de puntos, tablas comparativas) pero ENTREGA HTML VÁLIDO. Usa <h2>, <h3>, <ul>, <li> y de ser necesario, puedes usar <table>. NO entregues Markdown crudo en el campo content.
+4. Sección Técnica: Debes incluir siempre un ejemplo de código (ej. configuración de robots.txt o JSON-LD relacionado al tema) dentro de etiquetas <pre><code>...</code></pre>.
+5. Conclusión: Debe cerrar siempre con un CTA (Call to Action) dirigido a contratar los servicios de consultoría de Margora.
 
-IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. Sin markdown, sin \`\`\`json. Solo el JSON.
+IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. Sin markdown rodeando el JSON, sin \`\`\`json. Solo envía el objeto JSON crudo.
 `
 }
 
@@ -100,7 +98,7 @@ async function getTextFromResponse(result) {
       const part = c[0].content.parts[0]
       return part.text != null ? part.text : null
     }
-  } catch (_) {}
+  } catch (_) { }
   return null
 }
 

@@ -42,8 +42,29 @@ export default async function BlogPostPage({
   const post = (posts as Post[]).find((p) => p.id === slug)
   if (!post) notFound()
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": post.title,
+    "author": {
+      "@type": "Organization",
+      "name": "Margora",
+      "url": "https://margora.com"
+    },
+    "description": post.excerpt,
+    "keywords": "GEO, AIO, Generative Engine Optimization, AI Visibility, Margora",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Margora Agency"
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background pt-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <Button
           variant="ghost"
